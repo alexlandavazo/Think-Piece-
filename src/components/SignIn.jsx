@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { signInWithGoogle } from "../firebase";
+import {
+  signInWithGoogle,
+  auth,
+  updateDisplayNameCurrentUser,
+} from "../firebase";
 
 class SignIn extends Component {
   state = { email: "", password: "" };
@@ -10,10 +14,23 @@ class SignIn extends Component {
     this.setState({ [name]: value });
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
 
-    this.setState({ email: "", password: "" });
+    auth
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then((data) => {
+        if (data.user) updateDisplayNameCurrentUser(data.user.uid);
+        this.setState({ email: "", password: "" });
+      })
+      .catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+
+        window.alert("Error : " + errorMessage);
+
+        // ...
+      });
   };
 
   render() {

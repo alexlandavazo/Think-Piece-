@@ -22,7 +22,7 @@ export const storage = firebase.storage();
 
 export const provider = new firebase.auth.GoogleAuthProvider();
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
-export const signOut = () => auth.signOut();
+export const signOut = () => auth.signOut().then(() => {});
 
 window.firebase = firebase;
 
@@ -47,6 +47,7 @@ export const createUserProfileDocument = async (user, additionalData) => {
   }
   return getUserDocuemnt(user.uid);
 };
+
 export const getUserDocuemnt = async (uid) => {
   if (!uid) return null;
   try {
@@ -55,4 +56,13 @@ export const getUserDocuemnt = async (uid) => {
     console.error(error);
   }
 };
+
+export const updateDisplayNameCurrentUser = async (uid) => {
+  const userRef = await getUserDocuemnt(uid);
+  userRef.onSnapshot((snapshot) => {
+    const displayName = snapshot.data().displayName;
+    auth.currentUser.updateProfile({ displayName });
+  });
+};
+
 export default firebase;

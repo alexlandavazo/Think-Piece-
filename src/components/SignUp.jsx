@@ -22,6 +22,7 @@ class SignUp extends Component {
       );
 
       createUserProfileDocument(user, { displayName });
+      auth.currentUser.updateProfile({ displayName });
     } catch (error) {
       console.error(error);
     }
